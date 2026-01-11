@@ -1,6 +1,6 @@
 # TodayAI - AI/ML News Intelligence Agent
 
-A personalized news aggregator for AI and Machine Learning articles with a modern, Twitter/Instagram-like interface.
+A personalized news aggregator for AI and Machine Learning articles with a modern, Twitter like interface.
 
 ## Features
 
@@ -103,3 +103,4 @@ When the backend is running, visit:
 ## License
 
 MIT
+
