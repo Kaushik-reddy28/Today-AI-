@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AIBrief – Today in AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0A84FF;
+      --bg: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --card: #f9fafb;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 80px;
+    }
+
+    header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    header span {
+      color: var(--primary);
+    }
+
+    .container {
+      padding: 16px;
+      max-width: 720px;
+      margin: auto;
+    }
+
+    .loading, .error {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+
+    .error {
+      color: #ef4444;
+    }
+
+    .refresh-btn {
+      padding: 8px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin: 16px;
+      float: right;
+    }
+
+    .refresh-btn:hover {
+      opacity: 0.9;
+    }
+
+    section {
+      margin-bottom: 28px;
+    }
+
+    section h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .card:hover {
+      background: #f3f4f6;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .card-summary {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-top: 6px;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .expanded {
+      margin-top: 10px;
+      display: none;
+      font-size: 13px;
+    }
+
+    .expanded.show {
+      display: block;
+    }
+
+    .expanded ul {
+      padding-left: 18px;
+      margin-bottom: 10px;
+    }
+
+    .expanded li {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .original-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .original-link:hover {
+      text-decoration: underline;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state .hint {
+      font-size: 14px;
+      margin-top: 8px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Today in <span>AI</span></h1>
+  <button class="refresh-btn" onclick="collectNews()">🔄 Collect News</button>
+  <div style="clear: both;"></div>
+</header>
+
+<div class="container">
+  <div id="loading" class="loading" style="display: none;">Loading news...</div>
+  <div id="error" class="error" style="display: none;"></div>
+  
+  <div id="news-content">
+    <div class="empty-state">
+      <p>No news yet. Click "🔄 Collect News" to fetch AI/ML news!</p>
+      <p class="hint">News will be collected from TechCrunch, VentureBeat, arXiv, and more</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:8000';
+
+  async function collectNews() {
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const content = document.getElementById('news-content');
+    
+    loading.style.display = 'block';
+    error.style.display = 'none';
+    content.innerHTML = '';
+    
+    try {
+      // Collect news
+      const collectResponse = await fetch(`${API_BASE}/api/collect`, {
+        method: 'POST'
+      });
+      const collectData = await collectResponse.json();
+      
+      if (!collectResponse.ok) {
+        throw new Error(collectData.detail || 'Failed to collect news');
+      }
+      
+      // Wait a moment for processing
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Get the feed
+      await loadNews();
+      
+    } catch (err) {
+      error.style.display = 'block';
+      error.textContent = 'Error: ' + err.message + '. Make sure the backend is running on http://localhost:8000';
+      loading.style.display = 'none';
+    }
+  }
+
+  async function loadNews() {
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const content = document.getElementById('news-content');
+    
+    try {
+      const response = await fetch(`${API_BASE}/api/articles/today/feed`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to load news');
+      }
+      
+      const feed = await response.json();
+      
+      loading.style.display = 'none';
+      error.style.display = 'none';
+      
+      // Check if there are any articles
+      let hasArticles = false;
+      for (const key in feed) {
+        if (feed[key].articles && feed[key].articles.length > 0) {
+          hasArticles = true;
+          break;
+        }
+      }
+      
+      if (!hasArticles) {
+        content.innerHTML = `
+          <div class="empty-state">
+            <p>No articles found from the last 24 hours.</p>
+            <p class="hint">Try clicking "Collect News" again, or check back later for fresh AI news!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Render articles by category
+      const categories = [
+        { key: 'top_news', title: '🔥 Top AI Updates' },
+        { key: 'research', title: '📄 Research & Breakthroughs' },
+        { key: 'startups', title: '🚀 Startups & Funding' },
+        { key: 'tools', title: '🛠 New AI Tools' }
+      ];
+      
+      let html = '';
+      categories.forEach(cat => {
+        const articles = feed[cat.key]?.articles || [];
+        if (articles.length > 0) {
+          html += `<section><h2>${cat.title}</h2>`;
+          articles.forEach(article => {
+            html += `
+              <div class="card" onclick="toggleCard(this)">
+                <div class="card-title">${escapeHtml(article.title)}</div>
+                ${article.summary ? `<div class="card-summary">${escapeHtml(article.summary)}</div>` : ''}
+                <div class="expanded">
+                  ${article.key_points && article.key_points.length > 0 ? `
+                    <ul>
+                      ${article.key_points.map(point => `<li>${escapeHtml(point)}</li>`).join('')}
+                    </ul>
+                  ` : ''}
+                  ${article.original_link ? `<a href="${article.original_link}" target="_blank" class="original-link" onclick="event.stopPropagation()">Read original →</a>` : ''}
+                </div>
+                <div class="meta">
+                  <span>${escapeHtml(article.source)}</span>
+                  <span>${formatTime(article.published_time)}</span>
+                </div>
+              </div>
+            `;
+          });
+          html += `</section>`;
+        }
+      });
+      
+      content.innerHTML = html;
+      
+    } catch (err) {
+      loading.style.display = 'none';
+      error.style.display = 'block';
+      error.textContent = 'Error loading news: ' + err.message + '. Make sure the backend is running!';
+    }
+  }
+
+  function toggleCard(card) {
+    const expanded = card.querySelector('.expanded');
+    expanded.classList.toggle('show');
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function formatTime(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes} IST`;
+  }
+
+  // Auto-load news on page load
+  window.addEventListener('load', () => {
+    loadNews();
+  });
+</script>
+
+</body>
+</html>

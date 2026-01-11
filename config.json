@@ -1,0 +1,193 @@
+{
+  "app_name": "AIBrief",
+  "version": "1.0",
+  "description": "Daily AI/ML industry intelligence agent with clean, scrollable newsletter UI.",
+  "platform": ["android", "web"],
+  "theme": {
+    "mode": "light",
+    "primary_color": "#0A84FF",
+    "background": "#FFFFFF",
+    "font": "Inter"
+  },
+  "agent": {
+    "name": "AIBrief Agent",
+    "role": "AI/ML News Intelligence Assistant",
+    "objective": "Collect, filter, summarize, and present daily updates in the AI/ML industry from trusted online sources.",
+    "update_frequency": "daily",
+    "refresh_time": "08:00",
+    "timezone": "IST",
+    "filters": {
+      "topics": [
+        "Artificial Intelligence",
+        "Machine Learning",
+        "Generative AI",
+        "AI Agents",
+        "Transformers",
+        "Computer Vision",
+        "LLMs",
+        "AI Startups",
+        "AI Product Launches",
+        "AI Regulations",
+        "AI Research"
+      ],
+      "exclude_keywords": ["crypto", "memes", "politics"],
+      "freshness": "last_24_hours",
+      "language": "en"
+    }
+  },
+  "data_sources": {
+    "linkedin": {
+      "enabled": true,
+      "source_type": "social_feed",
+      "keywords": [
+        "AI launch",
+        "OpenAI",
+        "Google AI",
+        "Meta AI",
+        "Microsoft AI",
+        "AI startup",
+        "AI research"
+      ],
+      "priority": 1
+    },
+    "instagram": {
+      "enabled": true,
+      "source_type": "social_feed",
+      "hashtags": [
+        "#ai",
+        "#machinelearning",
+        "#generativeai",
+        "#aistartup",
+        "#llm",
+        "#deeplearning"
+      ],
+      "priority": 3
+    },
+    "web": {
+      "enabled": true,
+      "source_type": "news_and_blogs",
+      "domains": [
+        "techcrunch.com",
+        "venturebeat.com",
+        "arxiv.org",
+        "towardsdatascience.com",
+        "theverge.com",
+        "wired.com",
+        "mit.edu",
+        "nature.com",
+        "openai.com",
+        "deepmind.google",
+        "huggingface.co"
+      ],
+      "priority": 2
+    }
+  },
+  "processing_pipeline": {
+    "steps": [
+      "fetch_content",
+      "remove_duplicates",
+      "filter_by_topic",
+      "check_freshness",
+      "rank_by_relevance",
+      "summarize",
+      "format_for_ui"
+    ],
+    "ranking_factors": {
+      "recency": 0.4,
+      "source_priority": 0.3,
+      "engagement": 0.2,
+      "keyword_match": 0.1
+    },
+    "summary_style": {
+      "length": "short",
+      "tone": "professional",
+      "format": "bullet_points"
+    }
+  },
+  "ui": {
+    "layout": "vertical_scroll",
+    "home_screen": {
+      "title": "Today in AI",
+      "sections": [
+        {
+          "id": "top_news",
+          "title": "🔥 Top AI Updates",
+          "display_type": "card_list",
+          "max_items": 5
+        },
+        {
+          "id": "research",
+          "title": "📄 Research & Breakthroughs",
+          "display_type": "card_list",
+          "max_items": 5
+        },
+        {
+          "id": "startups",
+          "title": "🚀 Startups & Funding",
+          "display_type": "card_list",
+          "max_items": 5
+        },
+        {
+          "id": "tools",
+          "title": "🛠 New AI Tools",
+          "display_type": "card_list",
+          "max_items": 5
+        }
+      ]
+    },
+    "card_design": {
+      "style": "minimal",
+      "show_source": true,
+      "show_timestamp": true,
+      "expandable": true
+    },
+    "navigation": {
+      "tabs": ["Home", "Categories", "Bookmarks", "Settings"]
+    }
+  },
+  "content_format": {
+    "article": {
+      "fields": {
+        "title": true,
+        "summary": true,
+        "key_points": true,
+        "source": true,
+        "published_time": true,
+        "original_link": true
+      }
+    }
+  },
+  "personalization": {
+    "user_preferences": {
+      "topic_selection": true,
+      "source_priority": true,
+      "daily_notification": true
+    },
+    "default_topics": ["Generative AI", "AI Agents", "Startups", "Research"]
+  },
+  "notifications": {
+    "enabled": true,
+    "type": "daily_digest",
+    "message_template": "🧠 Your AI Brief is ready — {top_headline}"
+  },
+  "storage": {
+    "bookmark_articles": true,
+    "offline_cache": true,
+    "retention_days": 30
+  },
+  "export": {
+    "formats": ["pdf", "markdown"],
+    "newsletter_mode": true
+  },
+  "security": {
+    "data_collection": "read_only",
+    "user_tracking": false,
+    "encryption": true
+  },
+  "apk_ready": {
+    "supports_android": true,
+    "api_backend": "REST",
+    "offline_mode": true,
+    "lightweight_assets": true
+  }
+}
