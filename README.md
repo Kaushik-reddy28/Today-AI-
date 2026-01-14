@@ -71,22 +71,6 @@ npm run dev
 
 Frontend runs on `http://localhost:5173`
 
-## Deployment
-
-### Frontend (Vercel)
-
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Set environment variable:
-   - `VITE_API_URL` = Your backend API URL (e.g., `https://your-backend.railway.app`)
-4. Deploy
-
-### Backend (Railway or Render)
-
-See deployment instructions in the backend directory.
-
-## Environment Variables
-
 ### Frontend
 - `VITE_API_URL` - Backend API URL (default: `http://localhost:8000`)
 
@@ -100,7 +84,4 @@ When the backend is running, visit:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## License
-
-MIT
 
